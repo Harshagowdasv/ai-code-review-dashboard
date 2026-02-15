@@ -2,6 +2,7 @@
 
 # Directory-Structure
 
+```
 code-review-dashboard/
 ├── client/                          # React frontend
 │   ├── public/
