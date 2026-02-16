@@ -30,6 +30,20 @@ const createReview = async (req,res,next)=>{
 
 };
 
+const getReviews = async (req,res,next)=>{
+    try{
+        const reviews = await Review.find().sort({createdAt:-1});
+
+        res.status(200).json({
+            success:true,
+            data:reviews,
+        });
+    }catch(error){
+        next(error);
+    }
+};
+
 module.exports = {
     createReview,
+    getReviews,
 };
