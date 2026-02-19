@@ -40,7 +40,15 @@ const NewReview = () =>{
 
             <br /><br />
 
-            <button onClick={handleSubmit} disabled={loading}>
+            <button onClick={handleSubmit} disabled={loading}
+            style={{
+                padding:"10px 16px",
+                background:loading ? "#999":"#2c7be5",
+                color:"#fff",
+                border:"none",
+                borderRadius:"6px",
+                cursor:loading ? "not-allowed" : "pointer"
+            }}>
                 {loading ? "Analyzing...":"Analyze with AI"}
             </button>
         </div>

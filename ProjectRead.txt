@@ -1,0 +1,242 @@
+MERN Stack AI Code Review Dashboard - Architecture Guide
+1) Recommended Folder Structure
+code-review-dashboard/
+├── client/                          # React frontend
+│   ├── public/
+│   │   ├── index.html
+│   │   └── favicon.ico
+│   ├── src/
+│   │   ├── components/              # Reusable UI components
+│   │   │   ├── common/              # Buttons, Cards, Modals, etc.
+│   │   │   ├── layout/              # Navbar, Sidebar, Footer
+│   │   │   ├── dashboard/           # Dashboard-specific components
+│   │   │   └── reviews/             # Review-related components
+│   │   ├── pages/                   # Page-level components
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── ReviewDetail.jsx
+│   │   │   ├── NewReview.jsx
+│   │   │   └── Analytics.jsx
+│   │   ├── services/                # API call functions
+│   │   │   ├── api.js               # Axios instance & interceptors
+│   │   │   ├── reviewService.js
+│   │   │   └── analyticsService.js
+│   │   ├── hooks/                   # Custom React hooks
+│   │   │   ├── useReviews.js
+│   │   │   └── useAnalytics.js
+│   │   ├── context/                 # React Context (auth, theme)
+│   │   │   └── AuthContext.jsx
+│   │   ├── utils/                   # Helper functions
+│   │   │   ├── formatters.js
+│   │   │   └── validators.js
+│   │   ├── styles/                  # CSS modules or styled-components
+│   │   │   ├── variables.css
+│   │   │   └── global.css
+│   │   ├── App.jsx
+│   │   └── index.js
+│   └── package.json
+│
+├── server/                          # Node.js backend
+│   ├── src/
+│   │   ├── config/                  # Configuration files
+│   │   │   ├── database.js
+│   │   │   ├── openai.js
+│   │   │   └── env.js
+│   │   ├── models/                  # MongoDB schemas
+│   │   │   ├── Review.js
+│   │   │   ├── User.js
+│   │   │   └── Analytic.js
+│   │   ├── controllers/             # Request handlers
+│   │   │   ├── reviewController.js
+│   │   │   ├── userController.js
+│   │   │   └── analyticsController.js
+│   │   ├── routes/                  # API routes
+│   │   │   ├── index.js             # Route aggregator
+│   │   │   ├── reviews.js
+│   │   │   ├── users.js
+│   │   │   └── analytics.js
+│   │   ├── middleware/              # Express middleware
+│   │   │   ├── auth.js
+│   │   │   ├── errorHandler.js
+│   │   │   └── validation.js
+│   │   ├── services/                # Business logic
+│   │   │   ├── aiService.js         # OpenAI integration
+│   │   │   ├── reviewService.js
+│   │   │   └── cacheService.js      # Optional: Redis
+│   │   ├── utils/                   # Helper functions
+│   │   │   ├── logger.js
+│   │   │   └── responseFormatter.js
+│   │   └── app.js                   # Express app setup
+│   ├── server.js                    # Entry point
+│   └── package.json
+│
+└── README.md
+
+2) High-Level Architecture
+Three-Tier Architecture
+Frontend (React)
+
+Single Page Application with client-side routing
+Manages UI state with React hooks and Context API
+Makes async API calls to backend
+Displays code review results with syntax highlighting
+
+Backend (Express)
+
+RESTful API with clear resource endpoints
+Handles authentication/authorization (JWT)
+Processes code submissions
+Integrates with OpenAI API for code analysis
+Implements rate limiting and caching
+
+Database (MongoDB)
+
+Stores user accounts and authentication data
+Persists code reviews and AI feedback
+Tracks analytics (review counts, languages, issue types)
+Flexible schema for different code review formats
+
+Data Flow
+
+User submits code → React form validation
+Frontend sends POST request with code snippet
+Express middleware validates & authenticates
+Controller calls AI service for analysis
+AI service makes OpenAI API call
+Response parsed and stored in MongoDB
+Formatted data returned to frontend
+React updates UI with review results
+
+Key Design Decisions
+
+Separation of Concerns: Controllers handle HTTP, services handle business logic
+Service Layer: Isolates AI integration for easier testing/mocking
+Error Boundaries: Graceful error handling on both client and server
+Modular Routes: Each resource has its own route file
+Environment Config: All secrets in .env files (never committed)
+
+
+3) Key Components for Clean Dashboard UI
+Layout Components
+<DashboardLayout>
+
+Top navigation bar with logo and user menu
+Sidebar with navigation links (Dashboard, New Review, History, Analytics)
+Main content area with consistent padding
+Responsive design (collapsible sidebar on mobile)
+
+<Navbar>
+
+Branding/logo
+Navigation links
+User profile dropdown
+Notification bell icon
+
+<Sidebar>
+
+Vertical navigation menu
+Active route highlighting
+Icon + text labels
+Quick stats widget
+
+Dashboard Components
+<StatsCard>
+
+Display key metrics (total reviews, avg quality score, issues found)
+Icon + number + label layout
+Color-coded by metric type
+Hover effects for interactivity
+
+<RecentReviews>
+
+Table or card list of recent reviews
+Shows: timestamp, language, status, quick summary
+Click to view full review
+Pagination or infinite scroll
+
+<CodeSnippetPreview>
+
+Syntax-highlighted code display
+Line numbers
+Language badge
+Expandable/collapsible sections
+
+<ReviewResultCard>
+
+AI-generated feedback display
+Sections: Issues, Suggestions, Best Practices, Code Quality Score
+Severity indicators (error/warning/info)
+Copy/export functionality
+
+Interactive Components
+<CodeEditor>
+
+Textarea or integrated code editor (Monaco/CodeMirror)
+Language selector dropdown
+Character/line count
+Submit button with loading state
+
+<FilterBar>
+
+Search input
+Language filter dropdown
+Date range picker
+Sort options
+
+<AnalyticsChart>
+
+Chart.js or Recharts integration
+Visualize review trends over time
+Issue type distribution
+Language usage breakdown
+
+Utility Components
+<LoadingSpinner>
+
+Reusable loading indicator
+Used during API calls
+
+<ErrorBoundary>
+
+Catch React errors
+Display fallback UI
+
+<Modal>
+
+Reusable dialog component
+Confirm actions, display details
+
+<Toast/Notification>
+
+Success/error messages
+Auto-dismiss after timeout
+
+
+Interview Talking Points
+Scalability:
+
+Service layer makes it easy to swap AI providers
+MongoDB's flexible schema handles different code languages
+Middleware pattern allows easy addition of features (rate limiting, logging)
+
+Security:
+
+JWT authentication with httpOnly cookies
+Input validation on both client and server
+Rate limiting to prevent API abuse
+Environment variables for secrets
+
+Performance:
+
+Code splitting in React for faster initial load
+Database indexing on frequently queried fields
+Optional caching layer (Redis) for repeated reviews
+Debounced search inputs
+
+Best Practices:
+
+RESTful naming conventions (GET /api/reviews, POST /api/reviews)
+Consistent error response format
+Centralized error handling
+Modular, testable code structure
+
+This architecture demonstrates production-ready patterns that scale beyond a simple CRUD app. Perfect for portfolio discussions!
