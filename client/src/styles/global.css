@@ -30,3 +30,39 @@ body{
     font-weight: bold;
     color: #2c7be5;
 }
+
+.skeliton{
+    height: 80px;
+    background: linear-gradient(
+        90deg,
+        #eeeeee 25%,
+        #dddddd 37%,
+        #eeeeee 63%
+    );
+    background-size: 400% 100%;
+    animation: shimmer 1.4s ease infinite;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+@keyframes shimmer {
+    0%{
+        background-position: 100% 0;
+    }
+    100%{
+        background-position: 0 0;
+    }
+}
+
+.highlight{
+    animation: flash 2s ease;
+}
+
+@keyframes flash {
+    0%{
+        background-color: #d4edda;
+    }
+    100%{
+        background-color: #fff;
+    }
+}

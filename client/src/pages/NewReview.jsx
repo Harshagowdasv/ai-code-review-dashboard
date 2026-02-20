@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 const NewReview = () =>{
     const [inputText, setInputText] = useState("");
     const [loading, setLoading] = useState(false);
+    const [showToast, setShowToast] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async ()=>{
@@ -17,7 +18,11 @@ const NewReview = () =>{
                 inputText,
             });
 
-            navigate("/");
+            setShowToast(true);
+                setTimeout(() => {
+                    setShowToast(false);
+                    navigate("/");
+                }, 800);
 
         }catch(error){
             console.error(error);
@@ -50,6 +55,7 @@ const NewReview = () =>{
                 cursor:loading ? "not-allowed" : "pointer"
             }}>
                 {loading ? "Analyzing...":"Analyze with AI"}
+
             </button>
         </div>
     );
